@@ -3,13 +3,19 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 3035",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p 3033",
     "lint": "next lint"
   },
   "dependencies": {
-    "next": "12.2.5",
+    "@chakra-ui/icons": "^2.0.19",
+    "@chakra-ui/react": "^2.6.1",
+    "@emotion/react": "^11.11.0",
+    "@emotion/styled": "^11.11.0",
+    "chakra-react-select": "^4.6.0",
+    "framer-motion": "^10.12.14",
+    "next": "^12.2.5",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   },
