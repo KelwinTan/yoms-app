@@ -17,6 +17,7 @@ import {
   Stack,
 } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon, AddIcon } from "@chakra-ui/icons";
+import { useRouter } from "next/router";
 
 const Links = ["Dashboard"];
 
@@ -37,6 +38,7 @@ const NavLink = ({ children }: { children: ReactNode }) => (
 
 export default function NavWithAction() {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const router = useRouter();
 
   return (
     <>
@@ -68,6 +70,7 @@ export default function NavWithAction() {
               size={"sm"}
               mr={4}
               leftIcon={<AddIcon />}
+              onClick={() => router.push("/job/post")}
             >
               Post a Job
             </Button>

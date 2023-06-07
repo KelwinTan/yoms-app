@@ -10,8 +10,13 @@ import {
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
+import { JobModel } from "../../../api/job";
 
-export default function JobCard() {
+interface JobCardProps {
+  job: JobModel;
+}
+
+export default function JobCard(props: JobCardProps) {
   return (
     <Center py={6}>
       <Stack
@@ -42,10 +47,12 @@ export default function JobCard() {
           pt={2}
         >
           <Heading fontSize={"2xl"} fontFamily={"body"}>
-            Sticker Mule
+            {/* Sticker Mule */}
+            {props.job.jobCompanyName}
           </Heading>
           <Text fontWeight={600} color={"gray.500"} size="sm" mb={4}>
-            Software Engineer
+            {/* Software Engineer */}
+            {props.job.jobTitle ? props.job.jobTitle : "-"}
           </Text>
           <Stack align={"center"} justify={"center"} direction={"row"} mt={6}>
             <Badge

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Progress,
   Box,
@@ -7,26 +7,27 @@ import {
   Heading,
   Flex,
   FormControl,
-  GridItem,
   FormLabel,
   Input,
-  Select,
-  SimpleGrid,
-  InputLeftAddon,
-  InputGroup,
   Textarea,
-  FormHelperText,
-  InputRightElement,
-  SelectField,
+  CircularProgress,
+  position,
 } from "@chakra-ui/react";
 
 import { useToast } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
 import {
-  AsyncSelect,
   LoadingIndicatorProps,
+  Select,
   chakraComponents,
+  useChakraSelectProps,
+  ActionMeta,
 } from "chakra-react-select";
+import axios from "axios";
+import {
+  ConvertJobTypeToNum,
+  ConvertPrimaryTagToNum,
+} from "../../../utils/job";
 
 // These are the defaults for each of the custom props
 const asyncComponents = {
@@ -55,285 +56,262 @@ interface Option {
   label: string;
 }
 
-const colourOptions: Option[] = [
-  { value: "Red", label: "Red" },
-  { value: "Blue", label: "Blue" },
+const jobTypeOptions: Option[] = [
+  { value: "Full-Time", label: "Full-Time" },
+  { value: "Part-Time", label: "Part-Time" },
+  { value: "Contractor", label: "Contractor" },
+  { value: "Internship", label: "Internship" },
 ];
+
+const tagOptions: Option[] = [
+  { value: "Backend", label: "Backend" },
+  { value: "Frontend", label: "Frontend" },
+  { value: "Mobile", label: "Mobile" },
+  { value: "IOS", label: "IOS" },
+  { value: "DevOps", label: "DevOps" },
+];
+
+const jobLocationOptions: Option[] = [
+  { value: "Worldwide", label: "Worldwide" },
+  { value: "Indonesia", label: "Indonesia" },
+];
+
+async function postJob(
+  jobTitle: string,
+  position: string,
+  jobType: number,
+  primaryTag: number,
+  jobLocation: string | undefined,
+  jobDescription: string,
+  minSalary: number | null,
+  maxSalary: number | null,
+  companyName: string
+) {
+  axios
+    .post("http://localhost:8888/v1/add-doc", {
+      jobTitle: jobTitle,
+      position: position,
+      jobType: jobType,
+      jobPrimaryTag: primaryTag,
+      jobLocation: jobLocation,
+      jobDescription: jobDescription,
+      jobMinSalary: minSalary,
+      jobMaxSalary: maxSalary,
+      jobCompanyName: companyName,
+    })
+    .then(function (response) {
+      console.log(response);
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+}
 
 const Form1 = () => {
   const [show, setShow] = React.useState(false);
   const handleClick = () => setShow(!show);
+  const [jobTitle, setJobTitle] = useState("");
+  const [position, setPosition] = useState("");
+  const [jobType, setJobType] = useState<Option | null>(null);
+  const [primaryTag, setPrimaryTag] = useState<Option | null>(null);
+  const [jobLocation, setJobLocation] = useState<Option | null>(null);
+  const [jobDescription, setJobDescription] = useState("");
+  const [minSalary, setMinSalary] = useState<number | null>(null);
+  const [maxSalary, setMaxSalary] = useState<number | null>(null);
+  const [companyName, setCompanyName] = useState("");
+
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    setIsLoading(true);
+
+    console.log("jobType: ", jobType?.value);
+    console.log("jobTitle: ", jobTitle);
+    console.log("position: ", position);
+    console.log("primaryTag: ", primaryTag);
+    console.log("jobLocation: ", jobLocation);
+    console.log("jobDescription: ", jobDescription);
+    console.log("minSalary: ", minSalary);
+    console.log("maxSalary: ", maxSalary);
+    console.log("companyName: ", companyName);
+
+    var jobTypeNum: number = ConvertJobTypeToNum(jobType?.value);
+    var primaryTagNum: number = ConvertPrimaryTagToNum(primaryTag?.value);
+
+    try {
+      await postJob(
+        jobTitle,
+        position,
+        jobTypeNum,
+        primaryTagNum,
+        jobLocation?.value,
+        jobDescription,
+        minSalary,
+        maxSalary,
+        companyName
+      );
+      // await postJob({ jobTitle, position, jobType?.value, primaryTag?.value, jobLocation?.value, jobDescription, minSalary, maxSalary, companyName });
+      setIsLoading(false);
+    } catch (error) {
+      setError("invalid job title or job type");
+      // sanitizeJobPostFields();
+    }
+  };
+
+  // const withEvent(func: Function): React.ChangeEventHandler<any> {
+  //   return (event:React.ChangeEvent<any>) => {
+  //     const{currentTarget} = event;
+  //     func(currentTarget.value);
+  //   }
+  // }
+
   return (
     <>
       <Heading w="100%" textAlign={"center"} fontWeight="normal" mb="2%">
-        Hire Software Engineers
+        Job Details
       </Heading>
-      <FormControl isRequired>
-        <FormLabel htmlFor="job-title">Job Title</FormLabel>
-        <Input id="job-title" placeholder="Job Title" />
-      </FormControl>
-
-      <FormControl mt="2%">
-        <FormLabel htmlFor="job-type">Job Type</FormLabel>
-        {/* <Select
-          id="job-type"
-          name="job-type"
-          autoComplete="job-type"
-          placeholder="Select Job Type"
-          focusBorderColor="brand.400"
-          shadow="sm"
-          size="sm"
-          w="full"
-          rounded="md"
-        >
-          <option>Full-Time</option>
-          <option>Part-Time</option>
-          <option>Contractor</option>
-        </Select> */}
-
-        <AsyncSelect
-          name="colors"
-          placeholder="Select some colors..."
-          components={asyncComponents}
-          loadOptions={(inputValue, callback) => {
-            setTimeout(() => {
-              const values = colourOptions.filter((i) =>
-                i.label.toLowerCase().includes(inputValue.toLowerCase())
-              );
-              callback(values);
-            }, 1000);
+      <FormControl id="jobTitle" isRequired>
+        <FormLabel htmlFor="jobTitle">Job Title</FormLabel>
+        <Input
+          id="jobTitle"
+          placeholder="Job Title"
+          onChange={(event: React.FormEvent<HTMLInputElement>) => {
+            setJobTitle(event.currentTarget.value);
           }}
-          defaultOptions={colourOptions}
-          //   options={colourOptions}
         />
       </FormControl>
 
-      <FormControl mt="2%" isRequired>
-        <FormLabel htmlFor="company-name">Company Name</FormLabel>
-        <Input id="company-name" placeholder="Company Name" />
-      </FormControl>
-
-      <FormControl mt="2%" isRequired>
-        <FormLabel htmlFor="position">Position</FormLabel>
-        <Input id="position" placeholder="Position" />
-      </FormControl>
-    </>
-  );
-};
-
-const Form2 = () => {
-  return (
-    <>
-      <Heading w="100%" textAlign={"center"} fontWeight="normal" mb="2%">
-        User Details
-      </Heading>
-      <FormControl as={GridItem} colSpan={[6, 3]}>
-        <FormLabel
-          htmlFor="country"
-          fontSize="sm"
-          fontWeight="md"
-          color="gray.700"
-          _dark={{
-            color: "gray.50",
-          }}
-        >
-          Country / Region
-        </FormLabel>
+      <FormControl id="jobType" mt="2%" isRequired>
+        <FormLabel htmlFor="jobType">Job Type</FormLabel>
         <Select
-          id="country"
-          name="country"
-          autoComplete="country"
-          placeholder="Select option"
-          focusBorderColor="brand.400"
-          shadow="sm"
-          size="sm"
-          w="full"
-          rounded="md"
-        >
-          <option>United States</option>
-          <option>Canada</option>
-          <option>Mexico</option>
-        </Select>
-      </FormControl>
-
-      <FormControl as={GridItem} colSpan={6}>
-        <FormLabel
-          htmlFor="street_address"
-          fontSize="sm"
-          fontWeight="md"
-          color="gray.700"
-          _dark={{
-            color: "gray.50",
+          name="jobType"
+          placeholder="Job Type"
+          options={jobTypeOptions}
+          onChange={(newValue: Option | null) => {
+            setJobType(newValue);
           }}
-          mt="2%"
-        >
-          Street address
-        </FormLabel>
-        <Input
-          type="text"
-          name="street_address"
-          id="street_address"
-          autoComplete="street-address"
-          focusBorderColor="brand.400"
-          shadow="sm"
-          size="sm"
-          w="full"
-          rounded="md"
+          id="jobType"
+          inputId="jobType"
+          instanceId={"jobTypeInstance"}
         />
       </FormControl>
 
-      <FormControl as={GridItem} colSpan={[6, 6, null, 2]}>
-        <FormLabel
-          htmlFor="city"
-          fontSize="sm"
-          fontWeight="md"
-          color="gray.700"
-          _dark={{
-            color: "gray.50",
-          }}
-          mt="2%"
-        >
-          City
-        </FormLabel>
+      <FormControl id="position" mt="2%" isRequired>
+        <FormLabel htmlFor="position">Position</FormLabel>
         <Input
-          type="text"
-          name="city"
-          id="city"
-          autoComplete="city"
-          focusBorderColor="brand.400"
-          shadow="sm"
-          size="sm"
-          w="full"
-          rounded="md"
+          id="position"
+          placeholder="Position"
+          onChange={(event: React.FormEvent<HTMLInputElement>) => {
+            setPosition(event.currentTarget.value);
+          }}
         />
       </FormControl>
 
-      <FormControl as={GridItem} colSpan={[6, 3, null, 2]}>
-        <FormLabel
-          htmlFor="state"
-          fontSize="sm"
-          fontWeight="md"
-          color="gray.700"
-          _dark={{
-            color: "gray.50",
+      <FormControl id="primaryTag" mt="2%" isRequired>
+        <FormLabel htmlFor="primaryTag">Primary Tag</FormLabel>
+        <Select
+          name="primaryTag"
+          placeholder="Primary Tag"
+          options={tagOptions}
+          id="primaryTag"
+          inputId="primaryTag"
+          instanceId={"primaryTagInstance"}
+          onChange={(newValue: Option | null) => {
+            setPrimaryTag(newValue);
           }}
-          mt="2%"
-        >
-          State / Province
-        </FormLabel>
-        <Input
-          type="text"
-          name="state"
-          id="state"
-          autoComplete="state"
-          focusBorderColor="brand.400"
-          shadow="sm"
-          size="sm"
-          w="full"
-          rounded="md"
         />
       </FormControl>
 
-      <FormControl as={GridItem} colSpan={[6, 3, null, 2]}>
-        <FormLabel
-          htmlFor="postal_code"
-          fontSize="sm"
-          fontWeight="md"
-          color="gray.700"
-          _dark={{
-            color: "gray.50",
+      <FormControl id="jobLocation" mt="2%" isRequired>
+        <FormLabel htmlFor="jobLocation">Job Location</FormLabel>
+        <Select
+          id="jobLocation"
+          inputId="jobLocation"
+          instanceId={"jobLocationInstance"}
+          name="jobLocation"
+          placeholder="Job Location"
+          options={jobLocationOptions}
+          onChange={(newValue: Option | null) => {
+            setJobLocation(newValue);
           }}
-          mt="2%"
-        >
-          ZIP / Postal
-        </FormLabel>
-        <Input
-          type="text"
-          name="postal_code"
-          id="postal_code"
-          autoComplete="postal-code"
-          focusBorderColor="brand.400"
-          shadow="sm"
-          size="sm"
-          w="full"
-          rounded="md"
         />
       </FormControl>
-    </>
-  );
-};
 
-const Form3 = () => {
-  return (
-    <>
-      <Heading w="100%" textAlign={"center"} fontWeight="normal">
-        Social Handles
-      </Heading>
-      <SimpleGrid columns={1} spacing={6}>
-        <FormControl as={GridItem} colSpan={[3, 2]}>
-          <FormLabel
-            fontSize="sm"
-            fontWeight="md"
-            color="gray.700"
-            _dark={{
-              color: "gray.50",
-            }}
-          >
-            Website
-          </FormLabel>
-          <InputGroup size="sm">
-            <InputLeftAddon
-              bg="gray.50"
-              _dark={{
-                bg: "gray.800",
-              }}
-              color="gray.500"
-              rounded="md"
-            >
-              http://
-            </InputLeftAddon>
-            <Input
-              type="tel"
-              placeholder="www.example.com"
-              focusBorderColor="brand.400"
-              rounded="md"
-            />
-          </InputGroup>
-        </FormControl>
+      <FormControl id="jobDescription" mt={1} isRequired>
+        <FormLabel htmlFor="jobDescription">Job Description</FormLabel>
+        <Textarea
+          id="jobDescription"
+          placeholder="Brief description about the job"
+          rows={3}
+          shadow="sm"
+          focusBorderColor="brand.400"
+          fontSize={{
+            sm: "sm",
+          }}
+          onChange={(event: React.FormEvent<HTMLTextAreaElement>) => {
+            setJobDescription(event.currentTarget.value);
+          }}
+        />
+      </FormControl>
 
-        <FormControl id="email" mt={1}>
-          <FormLabel
-            fontSize="sm"
-            fontWeight="md"
-            color="gray.700"
-            _dark={{
-              color: "gray.50",
-            }}
-          >
-            About
-          </FormLabel>
-          <Textarea
-            placeholder="you@example.com"
-            rows={3}
-            shadow="sm"
-            focusBorderColor="brand.400"
-            fontSize={{
-              sm: "sm",
+      <FormControl id="salaryRange" mt="2%" isRequired>
+        <FormLabel htmlFor="salaryRange">Salary Range</FormLabel>
+        <Flex>
+          <Input
+            id="minSalary"
+            name="minSalary"
+            placeholder="Min Annual Salary"
+            type="number"
+            onChange={(event: React.FormEvent<HTMLInputElement>) => {
+              setMinSalary(event.currentTarget.valueAsNumber);
             }}
           />
-          <FormHelperText>
-            Brief description for your profile. URLs are hyperlinked.
-          </FormHelperText>
-        </FormControl>
-      </SimpleGrid>
+          <Input
+            id="maxSalary"
+            name="maxSalary"
+            placeholder="Max Annual Salary"
+            type="number"
+            onChange={(event: React.FormEvent<HTMLInputElement>) => {
+              setMaxSalary(event.currentTarget.valueAsNumber);
+            }}
+          />
+        </Flex>
+      </FormControl>
+
+      <FormControl id="companyName" mt="2%" isRequired>
+        <FormLabel htmlFor="companyName">Company Name</FormLabel>
+        <Input
+          id="companyName"
+          placeholder="Company Name"
+          onChange={(event: React.FormEvent<HTMLInputElement>) => {
+            setCompanyName(event.currentTarget.value);
+          }}
+        />
+      </FormControl>
+      <ButtonGroup mt="5%" w="100%">
+        <Flex w="100%" justifyContent="space-evenly">
+          <Button
+            w="7rem"
+            colorScheme="teal"
+            variant="solid"
+            onClick={handleSubmit}
+          >
+            {isLoading ? (
+              <CircularProgress isIndeterminate size="24px" color="teal" />
+            ) : (
+              "Submit"
+            )}
+          </Button>
+        </Flex>
+      </ButtonGroup>
     </>
   );
 };
 
 export default function JobPostForm() {
   const toast = useToast();
-  const [step, setStep] = useState(1);
-  const [progress, setProgress] = useState(33.33);
   return (
     <>
       <Box
@@ -345,67 +323,7 @@ export default function JobPostForm() {
         m="10px auto"
         as="form"
       >
-        <Progress
-          hasStripe
-          value={progress}
-          mb="5%"
-          mx="5%"
-          isAnimated
-        ></Progress>
-        {step === 1 ? <Form1 /> : step === 2 ? <Form2 /> : <Form3 />}
-        <ButtonGroup mt="5%" w="100%">
-          <Flex w="100%" justifyContent="space-between">
-            <Flex>
-              <Button
-                onClick={() => {
-                  setStep(step - 1);
-                  setProgress(progress - 33.33);
-                }}
-                isDisabled={step === 1}
-                colorScheme="teal"
-                variant="solid"
-                w="7rem"
-                mr="5%"
-              >
-                Back
-              </Button>
-              <Button
-                w="7rem"
-                isDisabled={step === 3}
-                onClick={() => {
-                  setStep(step + 1);
-                  if (step === 3) {
-                    setProgress(100);
-                  } else {
-                    setProgress(progress + 33.33);
-                  }
-                }}
-                colorScheme="teal"
-                variant="outline"
-              >
-                Next
-              </Button>
-            </Flex>
-            {step === 3 ? (
-              <Button
-                w="7rem"
-                colorScheme="red"
-                variant="solid"
-                onClick={() => {
-                  toast({
-                    title: "Account created.",
-                    description: "We've created your account for you.",
-                    status: "success",
-                    duration: 3000,
-                    isClosable: true,
-                  });
-                }}
-              >
-                Submit
-              </Button>
-            ) : null}
-          </Flex>
-        </ButtonGroup>
+        {<Form1 />}
       </Box>
     </>
   );
