@@ -14,7 +14,7 @@ export default function JobsView() {
   useEffect(() => {
     fetchJobsData();
     console.log("useeffect: ", jobs);
-  }, [fetchJobsData]);
+  }, [fetchJobsData, jobs]);
 
   return (
     <div>

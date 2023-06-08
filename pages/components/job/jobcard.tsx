@@ -13,10 +13,13 @@ import {
 import { JobModel } from "../../../api/job";
 
 interface JobCardProps {
-  job: JobModel;
+  job?: JobModel;
+  // job?: {
+  //   jobTitle?: string;
+  // };
 }
 
-export default function JobCard(props: JobCardProps) {
+const JobCard: React.FC<JobCardProps> = (props: JobCardProps) => {
   return (
     <Center py={6}>
       <Stack
@@ -36,6 +39,7 @@ export default function JobCard(props: JobCardProps) {
             src={
               "https://remoteok.com/cdn-cgi/image/format=auto,fit=contain,width=300,height=300,quality=80/https://remoteOK.com/assets/img/jobs/968d4e4faa688a4304dac72703360f711677750913.png"
             }
+            alt="company-logo"
           />
         </Flex>
         <Stack
@@ -48,11 +52,11 @@ export default function JobCard(props: JobCardProps) {
         >
           <Heading fontSize={"2xl"} fontFamily={"body"}>
             {/* Sticker Mule */}
-            {props.job.jobCompanyName}
+            {props.job?.jobCompanyName ? props.job?.jobCompanyName : ""}
           </Heading>
           <Text fontWeight={600} color={"gray.500"} size="sm" mb={4}>
             {/* Software Engineer */}
-            {props.job.jobTitle ? props.job.jobTitle : "-"}
+            {props.job?.jobTitle ? props.job?.jobTitle : "-"}
           </Text>
           <Stack align={"center"} justify={"center"} direction={"row"} mt={6}>
             <Badge
@@ -96,4 +100,6 @@ export default function JobCard(props: JobCardProps) {
       </Stack>
     </Center>
   );
-}
+};
+
+export default JobCard;

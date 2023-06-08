@@ -3,7 +3,6 @@ import Head from "next/head";
 import Image from "next/image";
 import styles from "../styles/Home.module.css";
 import NavWithAction from "./components/navigation/navbar";
-import JobCard from "./components/job/jobcard";
 import JobPostForm from "./components/job/postform";
 import JobsView from "./components/job/jobsview";
 import HorizontalJobview from "./components/job/horizontaljobcard";
