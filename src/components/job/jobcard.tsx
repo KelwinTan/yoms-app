@@ -5,7 +5,6 @@ import {
   Flex,
   Heading,
   Image,
-  Link,
   Stack,
   Text,
   useColorModeValue,
@@ -14,9 +13,6 @@ import { JobModel } from "../../../api/job";
 
 interface JobCardProps {
   job?: JobModel;
-  // job?: {
-  //   jobTitle?: string;
-  // };
 }
 
 const JobCard: React.FC<JobCardProps> = (props: JobCardProps) => {
@@ -51,11 +47,9 @@ const JobCard: React.FC<JobCardProps> = (props: JobCardProps) => {
           pt={2}
         >
           <Heading fontSize={"2xl"} fontFamily={"body"}>
-            {/* Sticker Mule */}
             {props.job?.jobCompanyName ? props.job?.jobCompanyName : ""}
           </Heading>
           <Text fontWeight={600} color={"gray.500"} size="sm" mb={4}>
-            {/* Software Engineer */}
             {props.job?.jobTitle ? props.job?.jobTitle : "-"}
           </Text>
           <Stack align={"center"} justify={"center"} direction={"row"} mt={6}>
@@ -94,6 +88,24 @@ const JobCard: React.FC<JobCardProps> = (props: JobCardProps) => {
               }}
             >
               Apply
+            </Button>
+            <Button
+              flex={1}
+              fontSize={"sm"}
+              rounded={"full"}
+              bg={"blue.400"}
+              color={"white"}
+              boxShadow={
+                "0px 1px 25px -5px rgb(66 153 225 / 48%), 0 10px 10px -5px rgb(66 153 225 / 43%)"
+              }
+              _hover={{
+                bg: "blue.500",
+              }}
+              _focus={{
+                bg: "blue.500",
+              }}
+            >
+              View Job Desc
             </Button>
           </Stack>
         </Stack>

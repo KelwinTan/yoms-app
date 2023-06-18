@@ -1,10 +1,10 @@
+import JobPostForm from "@components/job/postform";
+import FooterWithLogoCentered from "@components/navigation/footer";
+import NavWithAction from "@components/navigation/navbar";
+import styles from "@styles/Home.module.css";
 import type { NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
-import styles from "../../styles/Home.module.css";
-import NavWithAction from "../components/navigation/navbar";
-import JobPostForm from "../components/job/postform";
-import { Select } from "chakra-react-select";
 
 const Jobs = ["test", "test2"];
 
@@ -41,6 +41,7 @@ const JobPost: NextPage = () => {
             </span>
           </a>
         </footer>
+        <FooterWithLogoCentered />
       </div>
     </>
   );

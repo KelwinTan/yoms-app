@@ -1,34 +1,32 @@
-import React, { useEffect, useState } from "react";
 import {
-  Progress,
   Box,
-  ButtonGroup,
   Button,
-  Heading,
+  ButtonGroup,
+  CircularProgress,
   Flex,
   FormControl,
   FormLabel,
+  Heading,
+  Image,
   Input,
-  Textarea,
-  CircularProgress,
   position,
 } from "@chakra-ui/react";
+import React, { useState } from "react";
 
 import { useToast } from "@chakra-ui/react";
-import { AddIcon } from "@chakra-ui/icons";
 import {
   LoadingIndicatorProps,
   Select,
   chakraComponents,
-  useChakraSelectProps,
-  ActionMeta,
 } from "chakra-react-select";
-import axios from "axios";
+import { useRouter } from "next/router";
+import { JobModel, postJob } from "../../../api/job";
 import {
   ConvertJobTypeToNum,
   ConvertPrimaryTagToNum,
 } from "../../../utils/job";
-
+// import Editor from "../form/editorcontainter";
+import MarkdownEditor from "../md/markdown";
 // These are the defaults for each of the custom props
 const asyncComponents = {
   LoadingIndicator: (props: LoadingIndicatorProps) => (
@@ -76,42 +74,11 @@ const jobLocationOptions: Option[] = [
   { value: "Indonesia", label: "Indonesia" },
 ];
 
-async function postJob(
-  jobTitle: string,
-  position: string,
-  jobType: number,
-  primaryTag: number,
-  jobLocation: string | undefined,
-  jobDescription: string,
-  minSalary: number | null,
-  maxSalary: number | null,
-  companyName: string
-) {
-  axios
-    .post("http://localhost:8888/v1/add-doc", {
-      jobTitle: jobTitle,
-      position: position,
-      jobType: jobType,
-      jobPrimaryTag: primaryTag,
-      jobLocation: jobLocation,
-      jobDescription: jobDescription,
-      jobMinSalary: minSalary,
-      jobMaxSalary: maxSalary,
-      jobCompanyName: companyName,
-    })
-    .then(function (response) {
-      console.log(response);
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
-}
-
 const Form1 = () => {
   const [show, setShow] = React.useState(false);
   const handleClick = () => setShow(!show);
   const [jobTitle, setJobTitle] = useState("");
-  const [position, setPosition] = useState("");
+  // const [position, setPosition] = useState("");
   const [jobType, setJobType] = useState<Option | null>(null);
   const [primaryTag, setPrimaryTag] = useState<Option | null>(null);
   const [jobLocation, setJobLocation] = useState<Option | null>(null);
@@ -119,9 +86,17 @@ const Form1 = () => {
   const [minSalary, setMinSalary] = useState<number | null>(null);
   const [maxSalary, setMaxSalary] = useState<number | null>(null);
   const [companyName, setCompanyName] = useState("");
+  const [companyLogo, setCompanyLogo] = useState("");
 
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  // const [exported, setExported] = React.useState<EditorState | null>(null);
+
+  // const navigate = useNavigate();
+  const router = useRouter();
+
+  const companyLogoPlaceholder = "https://placehold.co/600x400";
 
   const handleSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -139,24 +114,31 @@ const Form1 = () => {
 
     var jobTypeNum: number = ConvertJobTypeToNum(jobType?.value);
     var primaryTagNum: number = ConvertPrimaryTagToNum(primaryTag?.value);
+    var job: JobModel = {
+      jobTitle: jobTitle,
+      jobType: jobTypeNum,
+      jobPrimaryTag: primaryTagNum,
+      jobLocation: jobLocation?.value ? jobLocation?.value : "",
+      jobDescription: jobDescription,
+      minSalary: minSalary?.valueOf() ? minSalary?.valueOf() : 0,
+      maxSalary: maxSalary?.valueOf() ? maxSalary?.valueOf() : 0,
+      jobCompanyName: companyName,
+      jobCompanyLogoURL:
+        companyLogo !== "" ? companyLogo : "https://placehold.co/600x400",
+    };
 
     try {
-      await postJob(
-        jobTitle,
-        position,
-        jobTypeNum,
-        primaryTagNum,
-        jobLocation?.value,
-        jobDescription,
-        minSalary,
-        maxSalary,
-        companyName
-      );
-      // await postJob({ jobTitle, position, jobType?.value, primaryTag?.value, jobLocation?.value, jobDescription, minSalary, maxSalary, companyName });
-      setIsLoading(false);
+      await postJob(job).then(() => {
+        setIsLoading(false);
+        // const timer = setTimeout(() => {
+        //   // navigate("/", { replace: true });
+        //   router.push("/");
+        // }, 1000);
+        router.push("/");
+        // clearTimeout(timer);
+      });
     } catch (error) {
       setError("invalid job title or job type");
-      // sanitizeJobPostFields();
     }
   };
 
@@ -173,8 +155,9 @@ const Form1 = () => {
         Job Details
       </Heading>
       <FormControl id="jobTitle" isRequired>
-        <FormLabel htmlFor="jobTitle">Job Title</FormLabel>
+        <FormLabel>Job Title</FormLabel>
         <Input
+          name="jobTitle"
           id="jobTitle"
           placeholder="Job Title"
           onChange={(event: React.FormEvent<HTMLInputElement>) => {
@@ -183,22 +166,22 @@ const Form1 = () => {
         />
       </FormControl>
 
-      <FormControl id="jobType" mt="2%" isRequired>
-        <FormLabel htmlFor="jobType">Job Type</FormLabel>
+      <FormControl id="jobType-Control" mt="2%" isRequired>
+        <FormLabel>Job Type</FormLabel>
         <Select
+          id="jobType"
           name="jobType"
           placeholder="Job Type"
           options={jobTypeOptions}
           onChange={(newValue: Option | null) => {
             setJobType(newValue);
           }}
-          id="jobType"
           inputId="jobType"
           instanceId={"jobTypeInstance"}
         />
       </FormControl>
 
-      <FormControl id="position" mt="2%" isRequired>
+      {/* <FormControl id="position" mt="2%" isRequired>
         <FormLabel htmlFor="position">Position</FormLabel>
         <Input
           id="position"
@@ -207,10 +190,10 @@ const Form1 = () => {
             setPosition(event.currentTarget.value);
           }}
         />
-      </FormControl>
+      </FormControl> */}
 
       <FormControl id="primaryTag" mt="2%" isRequired>
-        <FormLabel htmlFor="primaryTag">Primary Tag</FormLabel>
+        <FormLabel>Primary Tag</FormLabel>
         <Select
           name="primaryTag"
           placeholder="Primary Tag"
@@ -225,7 +208,7 @@ const Form1 = () => {
       </FormControl>
 
       <FormControl id="jobLocation" mt="2%" isRequired>
-        <FormLabel htmlFor="jobLocation">Job Location</FormLabel>
+        <FormLabel>Job Location</FormLabel>
         <Select
           id="jobLocation"
           inputId="jobLocation"
@@ -239,25 +222,8 @@ const Form1 = () => {
         />
       </FormControl>
 
-      <FormControl id="jobDescription" mt={1} isRequired>
-        <FormLabel htmlFor="jobDescription">Job Description</FormLabel>
-        <Textarea
-          id="jobDescription"
-          placeholder="Brief description about the job"
-          rows={3}
-          shadow="sm"
-          focusBorderColor="brand.400"
-          fontSize={{
-            sm: "sm",
-          }}
-          onChange={(event: React.FormEvent<HTMLTextAreaElement>) => {
-            setJobDescription(event.currentTarget.value);
-          }}
-        />
-      </FormControl>
-
       <FormControl id="salaryRange" mt="2%" isRequired>
-        <FormLabel htmlFor="salaryRange">Salary Range</FormLabel>
+        <FormLabel>Salary Range</FormLabel>
         <Flex>
           <Input
             id="minSalary"
@@ -281,15 +247,60 @@ const Form1 = () => {
       </FormControl>
 
       <FormControl id="companyName" mt="2%" isRequired>
-        <FormLabel htmlFor="companyName">Company Name</FormLabel>
+        <FormLabel>Company Name</FormLabel>
         <Input
           id="companyName"
           placeholder="Company Name"
           onChange={(event: React.FormEvent<HTMLInputElement>) => {
-            setCompanyName(event.currentTarget.value);
+            var name = event.currentTarget.value;
+            setCompanyName(name);
+            setCompanyLogo("https://logo.clearbit.com/" + name + ".com?s=300");
           }}
         />
       </FormControl>
+      <div className="company-logo">
+        <Image
+          width={"200px"}
+          borderEndColor={"black"}
+          src={
+            companyName !== "" ? companyLogo : "https://placehold.co/150x150"
+          }
+          alt="Company Logo"
+        />
+      </div>
+
+      <FormControl id="jobDescription" mt={1}>
+        <FormLabel>Job Description</FormLabel>
+        {/* <Textarea
+          id="jobDescription"
+          placeholder="Brief description about the job"
+          rows={3}
+          shadow="sm"
+          focusBorderColor="brand.400"
+          fontSize={{
+            sm: "sm",
+          }}
+          onChange={(event: React.FormEvent<HTMLTextAreaElement>) => {
+            setJobDescription(event.currentTarget.value);
+          }}
+        /> */}
+        {/* <Editor /> */}
+        {/* <Editor
+        // onPublished={(p) => {
+        //   setExported(p);
+        // }}
+        /> */}
+
+        {/* {exported && (
+          <>
+            <hr />
+            <h1>Output</h1>
+            <Editor editable={false} initalEditorState={exported} />
+          </>
+        )} */}
+        <MarkdownEditor />
+      </FormControl>
+
       <ButtonGroup mt="5%" w="100%">
         <Flex w="100%" justifyContent="space-evenly">
           <Button
@@ -319,7 +330,7 @@ export default function JobPostForm() {
         rounded="lg"
         shadow="1px 1px 3px rgba(0,0,0,0.3)"
         maxWidth={800}
-        p={6}
+        p={8}
         m="10px auto"
         as="form"
       >

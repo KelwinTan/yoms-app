@@ -31,3 +31,20 @@ export function ConvertPrimaryTagToNum(primaryTag: string | undefined): number {
       return 0;
   }
 }
+
+export function ConvertPrimaryTagNumToString(primaryTagNum: number): string {
+  switch (primaryTagNum) {
+    case 1:
+      return "Backend";
+    case 2:
+      return "Frontend";
+    case 3:
+      return "Mobile";
+    case 4:
+      return "IOS";
+    case 5:
+      return "DevOps";
+    default:
+      return "";
+  }
+}

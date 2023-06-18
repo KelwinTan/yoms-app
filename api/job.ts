@@ -4,28 +4,28 @@ const jobURL: string = "http://localhost:8888/v1/";
 
 export type JobModel = {
   jobTitle: string;
-  position: string;
   jobType: number;
-  primaryTag: number;
+  jobPrimaryTag: number;
   jobLocation: string;
   jobDescription: string;
   minSalary: number;
   maxSalary: number;
   jobCompanyName: string;
+  jobCompanyLogoURL: string;
 };
 
 export async function postJob(job: JobModel) {
   await axios
-    .post(jobURL + "add-doc", {
+    .post(jobURL + "jobs", {
       jobTitle: job.jobTitle,
-      position: job.position,
       jobType: job.jobType,
-      jobPrimaryTag: job.primaryTag,
+      jobPrimaryTag: job.jobPrimaryTag,
       jobLocation: job.jobLocation,
       jobDescription: job.jobDescription,
       jobMinSalary: job.minSalary,
       jobMaxSalary: job.maxSalary,
       jobCompanyName: job.jobCompanyName,
+      jobCompanyLogoURL: job.jobCompanyLogoURL,
     })
     .then(function (response) {
       console.log(response);

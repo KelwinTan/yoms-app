@@ -1,27 +1,30 @@
-import { ReactNode } from "react";
+import { AddIcon, CloseIcon, HamburgerIcon } from "@chakra-ui/icons";
 import {
   Box,
-  Flex,
-  Avatar,
-  HStack,
-  Link,
-  IconButton,
   Button,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  MenuDivider,
-  useDisclosure,
-  useColorModeValue,
+  Flex,
+  HStack,
+  IconButton,
+  Link,
   Stack,
+  useColorModeValue,
+  useDisclosure,
 } from "@chakra-ui/react";
-import { HamburgerIcon, CloseIcon, AddIcon } from "@chakra-ui/icons";
 import { useRouter } from "next/router";
 
-const Links = ["Dashboard"];
+type link = {
+  name: string;
+  link: string;
+};
 
-const NavLink = ({ children }: { children: ReactNode }) => (
+const Links: link[] = [
+  {
+    link: "/",
+    name: "Dashboard",
+  },
+];
+
+const NavLink = ({ children }: { children: link }) => (
   <Link
     px={2}
     py={1}
@@ -30,9 +33,9 @@ const NavLink = ({ children }: { children: ReactNode }) => (
       textDecoration: "none",
       bg: useColorModeValue("gray.200", "gray.700"),
     }}
-    href={"#"}
+    href={children.link}
   >
-    {children}
+    {children.name}
   </Link>
 );
 
@@ -59,7 +62,7 @@ export default function NavWithAction() {
               display={{ base: "none", md: "flex" }}
             >
               {Links.map((link) => (
-                <NavLink key={link}>{link}</NavLink>
+                <NavLink key={link.name}>{link}</NavLink>
               ))}
             </HStack>
           </HStack>
@@ -74,7 +77,7 @@ export default function NavWithAction() {
             >
               Post a Job
             </Button>
-            <Menu>
+            {/* <Menu>
               <MenuButton
                 as={Button}
                 rounded={"full"}
@@ -86,9 +89,9 @@ export default function NavWithAction() {
               </MenuButton>
               <MenuList>
                 <MenuItem>Profile | Coming Soon</MenuItem>
-                {/* <MenuDivider /> */}
+                <MenuDivider />
               </MenuList>
-            </Menu>
+            </Menu> */}
           </Flex>
         </Flex>
 
@@ -96,7 +99,7 @@ export default function NavWithAction() {
           <Box pb={4} display={{ md: "none" }}>
             <Stack as={"nav"} spacing={4}>
               {Links.map((link) => (
-                <NavLink key={link}>{link}</NavLink>
+                <NavLink key={link.name}>{link}</NavLink>
               ))}
             </Stack>
           </Box>

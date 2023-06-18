@@ -1,6 +1,7 @@
+import { JobModel, getAllJobs } from "@api/job";
+import { Container } from "@chakra-ui/react";
+import HorizontalJobview from "@components/job/horizontaljobcard";
 import { useCallback, useEffect, useState } from "react";
-import { JobModel, getAllJobs } from "../../../api/job";
-import JobCard from "./jobcard";
 
 export default function JobsView() {
   const [jobs, setJobs] = useState<JobModel[]>([]);
@@ -13,14 +14,13 @@ export default function JobsView() {
 
   useEffect(() => {
     fetchJobsData();
-    console.log("useeffect: ", jobs);
-  }, [fetchJobsData, jobs]);
+  }, [fetchJobsData]);
 
   return (
-    <div>
+    <Container>
       {jobs.map((job, index) => {
-        return <JobCard job={job} key={index} />;
+        return <HorizontalJobview job={job} key={index} />;
       })}
-    </div>
+    </Container>
   );
 }
