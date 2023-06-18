@@ -1,3 +1,4 @@
+import { JobModel } from "@api/job";
 import {
   Badge,
   Button,
@@ -9,7 +10,6 @@ import {
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { JobModel } from "../../../api/job";
 
 interface JobCardProps {
   job?: JobModel;

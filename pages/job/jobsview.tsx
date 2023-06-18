@@ -1,4 +1,4 @@
-import { JobModel, getAllJobs } from "@api/job";
+import { GetAllJobs, JobModel } from "@api/job";
 import { Container } from "@chakra-ui/react";
 import HorizontalJobview from "@components/job/horizontaljobcard";
 import { useCallback, useEffect, useState } from "react";
@@ -7,7 +7,7 @@ export default function JobsView() {
   const [jobs, setJobs] = useState<JobModel[]>([]);
 
   const fetchJobsData = useCallback(async () => {
-    const data = await getAllJobs();
+    const data = await GetAllJobs();
     console.log("data: ", data.data);
     setJobs(data.data);
   }, []);

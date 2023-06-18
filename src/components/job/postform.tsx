@@ -13,20 +13,17 @@ import {
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 
+import { JobModel, PostJob } from "@api/job";
 import { useToast } from "@chakra-ui/react";
+import { ConvertJobTypeToNum, ConvertPrimaryTagToNum } from "@utils/job";
 import {
   LoadingIndicatorProps,
   Select,
   chakraComponents,
 } from "chakra-react-select";
 import { useRouter } from "next/router";
-import { JobModel, postJob } from "../../../api/job";
-import {
-  ConvertJobTypeToNum,
-  ConvertPrimaryTagToNum,
-} from "../../../utils/job";
 // import Editor from "../form/editorcontainter";
-import MarkdownEditor from "../md/markdown";
+import MarkdownEditor from "@components/md/markdown";
 // These are the defaults for each of the custom props
 const asyncComponents = {
   LoadingIndicator: (props: LoadingIndicatorProps) => (
@@ -128,7 +125,7 @@ const Form1 = () => {
     };
 
     try {
-      await postJob(job).then(() => {
+      await PostJob(job).then(() => {
         setIsLoading(false);
         // const timer = setTimeout(() => {
         //   // navigate("/", { replace: true });

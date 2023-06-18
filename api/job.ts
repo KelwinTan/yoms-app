@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
 
 const jobURL: string = "http://localhost:8888/v1/";
 
@@ -14,7 +14,7 @@ export type JobModel = {
   jobCompanyLogoURL: string;
 };
 
-export async function postJob(job: JobModel) {
+export async function PostJob(job: JobModel) {
   await axios
     .post(jobURL + "jobs", {
       jobTitle: job.jobTitle,
@@ -35,7 +35,7 @@ export async function postJob(job: JobModel) {
     });
 }
 
-export async function getAllJobs() {
+export async function GetAllJobs() {
   const response = await axios.get(jobURL + "jobs");
   // .then((resp: AxiosResponse<any, any>) => {
   //   console.log(resp.data);
