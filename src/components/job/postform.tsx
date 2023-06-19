@@ -1,4 +1,5 @@
 import {
+  Avatar,
   Box,
   Button,
   ButtonGroup,
@@ -7,13 +8,17 @@ import {
   FormControl,
   FormLabel,
   Heading,
-  Image,
   Input,
+  NumberDecrementStepper,
+  NumberIncrementStepper,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
   position,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 
-import { JobModel, PostJob } from "@api/job";
+import { CreateJobReq, PostJob } from "@api/job";
 import { useToast } from "@chakra-ui/react";
 import { ConvertJobTypeToNum, ConvertPrimaryTagToNum } from "@utils/job";
 import {
@@ -79,14 +84,20 @@ const Form1 = () => {
   const [jobType, setJobType] = useState<Option | null>(null);
   const [primaryTag, setPrimaryTag] = useState<Option | null>(null);
   const [jobLocation, setJobLocation] = useState<Option | null>(null);
-  const [jobDescription, setJobDescription] = useState("");
+  const [jobDescription, setJobDescription] = useState<string | undefined>(
+    "Job Description"
+  );
   const [minSalary, setMinSalary] = useState<number | null>(null);
   const [maxSalary, setMaxSalary] = useState<number | null>(null);
   const [companyName, setCompanyName] = useState("");
   const [companyLogo, setCompanyLogo] = useState("");
-
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const format = (val: string) => `$` + val;
+  const parse = (val: string) => val.replace(/^\$/, "");
+
+  const [minVal, setMinValue] = useState("0");
+  const [maxVal, setMaxValue] = useState("0");
 
   // const [exported, setExported] = React.useState<EditorState | null>(null);
 
@@ -111,14 +122,14 @@ const Form1 = () => {
 
     var jobTypeNum: number = ConvertJobTypeToNum(jobType?.value);
     var primaryTagNum: number = ConvertPrimaryTagToNum(primaryTag?.value);
-    var job: JobModel = {
+    var job: CreateJobReq = {
       jobTitle: jobTitle,
       jobType: jobTypeNum,
       jobPrimaryTag: primaryTagNum,
       jobLocation: jobLocation?.value ? jobLocation?.value : "",
-      jobDescription: jobDescription,
-      minSalary: minSalary?.valueOf() ? minSalary?.valueOf() : 0,
-      maxSalary: maxSalary?.valueOf() ? maxSalary?.valueOf() : 0,
+      jobDescription: jobDescription ? jobDescription : "",
+      jobMinSalary: minSalary?.valueOf() ? minSalary?.valueOf() : 0,
+      jobMaxSalary: maxSalary?.valueOf() ? maxSalary?.valueOf() : 0,
       jobCompanyName: companyName,
       jobCompanyLogoURL:
         companyLogo !== "" ? companyLogo : "https://placehold.co/600x400",
@@ -131,20 +142,13 @@ const Form1 = () => {
         //   // navigate("/", { replace: true });
         //   router.push("/");
         // }, 1000);
-        router.push("/");
         // clearTimeout(timer);
+        router.push("/");
       });
     } catch (error) {
       setError("invalid job title or job type");
     }
   };
-
-  // const withEvent(func: Function): React.ChangeEventHandler<any> {
-  //   return (event:React.ChangeEvent<any>) => {
-  //     const{currentTarget} = event;
-  //     func(currentTarget.value);
-  //   }
-  // }
 
   return (
     <>
@@ -222,7 +226,7 @@ const Form1 = () => {
       <FormControl id="salaryRange" mt="2%" isRequired>
         <FormLabel>Salary Range</FormLabel>
         <Flex>
-          <Input
+          {/* <Input
             id="minSalary"
             name="minSalary"
             placeholder="Min Annual Salary"
@@ -230,8 +234,24 @@ const Form1 = () => {
             onChange={(event: React.FormEvent<HTMLInputElement>) => {
               setMinSalary(event.currentTarget.valueAsNumber);
             }}
-          />
-          <Input
+          /> */}
+          <NumberInput
+            id="minSalary"
+            name="minSalary"
+            onChange={(valueString, valueAsNumber) => {
+              setMinValue(parse(valueString));
+              setMinSalary(valueAsNumber);
+            }}
+            value={format(minVal)}
+          >
+            <NumberInputField />
+            <NumberInputStepper>
+              <NumberIncrementStepper />
+              <NumberDecrementStepper />
+            </NumberInputStepper>
+          </NumberInput>
+          &nbsp;&nbsp;&nbsp;
+          {/* <Input
             id="maxSalary"
             name="maxSalary"
             placeholder="Max Annual Salary"
@@ -239,7 +259,23 @@ const Form1 = () => {
             onChange={(event: React.FormEvent<HTMLInputElement>) => {
               setMaxSalary(event.currentTarget.valueAsNumber);
             }}
-          />
+          /> */}
+          <NumberInput
+            id="maxSalary"
+            name="maxSalary"
+            onChange={(valueString, valueAsNumber) => {
+              setMaxValue(parse(valueString));
+              setMaxSalary(valueAsNumber);
+            }}
+            value={format(maxVal)}
+            // max={50}
+          >
+            <NumberInputField />
+            <NumberInputStepper>
+              <NumberIncrementStepper />
+              <NumberDecrementStepper />
+            </NumberInputStepper>
+          </NumberInput>
         </Flex>
       </FormControl>
 
@@ -256,14 +292,22 @@ const Form1 = () => {
         />
       </FormControl>
       <div className="company-logo">
-        <Image
+        <Avatar
+          size={"2xl"}
+          name="Company Logo"
+          src={
+            companyName !== "" ? companyLogo : "https://placehold.co/150x150"
+          }
+        />
+
+        {/* <Image
           width={"200px"}
           borderEndColor={"black"}
           src={
             companyName !== "" ? companyLogo : "https://placehold.co/150x150"
           }
           alt="Company Logo"
-        />
+        /> */}
       </div>
 
       <FormControl id="jobDescription" mt={1}>
@@ -295,7 +339,7 @@ const Form1 = () => {
             <Editor editable={false} initalEditorState={exported} />
           </>
         )} */}
-        <MarkdownEditor />
+        <MarkdownEditor value={jobDescription} onChange={setJobDescription} />
       </FormControl>
 
       <ButtonGroup mt="5%" w="100%">

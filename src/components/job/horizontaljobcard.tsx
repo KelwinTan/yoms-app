@@ -1,8 +1,9 @@
 import { JobModel } from "@api/job";
-import { AddIcon, BellIcon } from "@chakra-ui/icons";
 import {
+  Avatar,
   Card,
   CardBody,
+  Divider,
   Drawer,
   DrawerBody,
   DrawerCloseButton,
@@ -11,22 +12,31 @@ import {
   DrawerOverlay,
   Flex,
   Heading,
-  IconButton,
   Image,
   Stack,
   Tag,
   TagLabel,
-  TagLeftIcon,
   Text,
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
 import { ConvertPrimaryTagNumToString } from "@utils/job";
+import { GetPlaceholderImageByString } from "@utils/placeholder";
+import { ConvertTimeToDaysOrHours } from "@utils/time";
+import dynamic from "next/dynamic";
 import { useRef, useState } from "react";
 
 interface JobViewProps {
   job?: JobModel;
 }
+
+const EditerMarkdown = dynamic(
+  () =>
+    import("@uiw/react-md-editor").then((mod) => {
+      return mod.default.Markdown;
+    }),
+  { ssr: false }
+);
 
 export default function HorizontalJobview(props: JobViewProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -51,8 +61,8 @@ export default function HorizontalJobview(props: JobViewProps) {
       >
         <Image
           objectFit="cover"
-          maxW={{ base: "100%", sm: "200px" }}
-          maxH={{ base: "100%", sm: "200px" }}
+          maxW={{ base: "100%", sm: "150px" }}
+          maxH={{ base: "100%", sm: "150px" }}
           src={
             props.job?.jobCompanyLogoURL
               ? props.job?.jobCompanyLogoURL
@@ -83,35 +93,65 @@ export default function HorizontalJobview(props: JobViewProps) {
             <Flex letterSpacing="4">
               <Flex flex="1" gap="4" alignItems="center" flexWrap="wrap">
                 <Heading size="md">
-                  {props.job?.jobCompanyName
-                    ? props.job?.jobCompanyName
-                    : "No Company Name"}
+                  {props.job?.jobTitle ? props.job?.jobTitle : "No Job Title"}
                 </Heading>
               </Flex>
-              <IconButton
-                variant="ghost"
-                colorScheme="gray"
-                aria-label="See menu"
-                icon={<BellIcon />}
-              />
+              <Text fontSize="sm" fontWeight={"bold"}>
+                {props.job?.createdAt
+                  ? ConvertTimeToDaysOrHours(props.job.createdAt)
+                  : ""}
+              </Text>
             </Flex>
 
-            <Text py="2">
-              {props.job?.jobTitle ? props.job?.jobTitle : "No Job Title"}
+            <Text py="1">
+              {props.job?.jobCompanyName
+                ? props.job?.jobCompanyName
+                : "No Company Name"}
             </Text>
 
-            <Text py="2">
-              {props.job?.jobDescription
-                ? props.job?.jobDescription
-                : "No Description"}
-            </Text>
+            {props.job ? (
+              <Text fontSize={"xs"}>
+                💰 {props.job.jobMinSalary + " - " + props.job.jobMaxSalary} per
+                Year
+              </Text>
+            ) : (
+              <></>
+            )}
 
-            {props.job?.jobPrimaryTag !== undefined ? (
+            {/* Heere */}
+            {props.job ? (
+              <div style={{ marginTop: "5px" }}>
+                <Tag
+                  size="sm"
+                  variant="subtle"
+                  colorScheme="cyan"
+                  borderRadius="full"
+                >
+                  <TagLabel>
+                    {ConvertPrimaryTagNumToString(props.job?.jobPrimaryTag)}
+                  </TagLabel>
+                </Tag>
+
+                <Tag
+                  size="sm"
+                  variant="subtle"
+                  colorScheme="cyan"
+                  borderRadius="full"
+                >
+                  <TagLabel>{props.job.jobLocation}</TagLabel>
+                </Tag>
+              </div>
+            ) : (
+              <></>
+            )}
+
+            {/* {props.job?.jobPrimaryTag !== undefined ? (
               <Tag
-                size="md"
+                size="sm"
                 variant="subtle"
                 colorScheme="cyan"
                 borderRadius="full"
+                style={{ marginTop: "5px" }}
               >
                 <TagLeftIcon boxSize="12px" as={AddIcon} />
                 <TagLabel>
@@ -120,7 +160,7 @@ export default function HorizontalJobview(props: JobViewProps) {
               </Tag>
             ) : (
               <></>
-            )}
+            )} */}
           </CardBody>
         </Stack>
       </Card>
@@ -136,36 +176,46 @@ export default function HorizontalJobview(props: JobViewProps) {
           <DrawerOverlay />
           <DrawerContent>
             <DrawerCloseButton />
-            <DrawerHeader>{props.job?.jobTitle}</DrawerHeader>
+            <DrawerHeader>
+              {props.job?.jobTitle}
+              <Text fontSize="sm">
+                {props.job?.jobCompanyName
+                  ? props.job?.jobCompanyName
+                  : "No Company Name"}
+              </Text>
+            </DrawerHeader>
+
             <DrawerBody>
               <div style={{ display: "flex", justifyContent: "center" }}>
-                <Image
-                  objectFit="cover"
-                  maxW={{ base: "100%", sm: "200px" }}
-                  maxH={{ base: "100%", sm: "150px" }}
+                <Avatar
+                  size={"2xl"}
+                  name="Company Logo"
                   src={
-                    props.job?.jobCompanyLogoURL
+                    props.job?.jobCompanyLogoURL !== ""
                       ? props.job?.jobCompanyLogoURL
-                      : "https://placehold.co/300x300"
+                      : GetPlaceholderImageByString(props.job.jobCompanyName)
                   }
-                  alt="Company Logo"
                 />
               </div>
               <div style={{ marginTop: "10px" }}>
-                <Heading as="h4" size="md">
+                <Text fontSize="xl" fontWeight={"bold"}>
                   Job Description
-                </Heading>
-                <p>{props.job?.jobDescription}</p>
-                <p>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                  Consequat nisl vel pretium lectus quam id. Semper quis lectus
-                  nulla at volutpat diam ut venenatis. Dolor morbi non arcu
-                  risus quis varius quam quisque. Massa ultricies mi quis
-                  hendrerit dolor magna eget est lorem. Erat imperdiet sed
-                  euismod nisi porta. Lectus vestibulum mattis ullamcorper
-                  velit.
-                </p>
+                </Text>
+                <EditerMarkdown source={props.job?.jobDescription} />
+                <Divider />
+                <Text fontSize="xl" fontWeight={"bold"}>
+                  Job Location
+                </Text>
+                <Text fontSize={"lg"}>{props.job?.jobLocation}</Text>
+                <Divider />
+                <Text fontSize="xl" fontWeight={"bold"}>
+                  Job Salary
+                </Text>
+                <Text fontSize={"lg"}>
+                  {props.job
+                    ? props.job.jobMinSalary + " - " + props.job.jobMaxSalary
+                    : "test"}
+                </Text>
               </div>
             </DrawerBody>
           </DrawerContent>

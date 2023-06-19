@@ -2,19 +2,33 @@ import axios from "axios";
 
 const jobURL: string = "http://localhost:8888/v1/";
 
+export type CreateJobReq = {
+  jobTitle: string;
+  jobType: number;
+  jobPrimaryTag: number;
+  jobLocation: string;
+  jobDescription: string;
+  jobMinSalary: number;
+  jobMaxSalary: number;
+  jobCompanyName: string;
+  jobCompanyLogoURL: string;
+};
+
 export type JobModel = {
   jobTitle: string;
   jobType: number;
   jobPrimaryTag: number;
   jobLocation: string;
   jobDescription: string;
-  minSalary: number;
-  maxSalary: number;
+  jobMinSalary: number;
+  jobMaxSalary: number;
   jobCompanyName: string;
   jobCompanyLogoURL: string;
+  createdAt: Date;
+  updatedAt: Date;
 };
 
-export async function PostJob(job: JobModel) {
+export async function PostJob(job: CreateJobReq) {
   await axios
     .post(jobURL + "jobs", {
       jobTitle: job.jobTitle,
@@ -22,8 +36,8 @@ export async function PostJob(job: JobModel) {
       jobPrimaryTag: job.jobPrimaryTag,
       jobLocation: job.jobLocation,
       jobDescription: job.jobDescription,
-      jobMinSalary: job.minSalary,
-      jobMaxSalary: job.maxSalary,
+      jobMinSalary: job.jobMinSalary,
+      jobMaxSalary: job.jobMaxSalary,
       jobCompanyName: job.jobCompanyName,
       jobCompanyLogoURL: job.jobCompanyLogoURL,
     })
@@ -37,13 +51,5 @@ export async function PostJob(job: JobModel) {
 
 export async function GetAllJobs() {
   const response = await axios.get(jobURL + "jobs");
-  // .then((resp: AxiosResponse<any, any>) => {
-  //   console.log(resp.data);
-  //   return resp.data;
-  // })
-  // .catch((error) => {
-  //   console.log(error);
-  // });
-  //   console.log("test");
   return response.data;
 }

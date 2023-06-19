@@ -16,3 +16,4 @@ module.exports = removeImports(nextConfig)({
   }
 });
 
+// module.exports = nextConfig

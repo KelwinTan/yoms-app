@@ -1,4 +1,10 @@
-import { AddIcon, CloseIcon, HamburgerIcon } from "@chakra-ui/icons";
+import {
+  AddIcon,
+  CloseIcon,
+  HamburgerIcon,
+  MoonIcon,
+  SunIcon,
+} from "@chakra-ui/icons";
 import {
   Box,
   Button,
@@ -7,6 +13,7 @@ import {
   IconButton,
   Link,
   Stack,
+  useColorMode,
   useColorModeValue,
   useDisclosure,
 } from "@chakra-ui/react";
@@ -42,6 +49,7 @@ const NavLink = ({ children }: { children: link }) => (
 export default function NavWithAction() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const router = useRouter();
+  const { colorMode, toggleColorMode } = useColorMode();
 
   return (
     <>
@@ -67,6 +75,23 @@ export default function NavWithAction() {
             </HStack>
           </HStack>
           <Flex alignItems={"center"}>
+            {colorMode === "light" ? (
+              <MoonIcon
+                onClick={toggleColorMode}
+                boxSize={6}
+                style={{ cursor: "pointer", margin: "0 10px" }}
+              >
+                Toggle
+              </MoonIcon>
+            ) : (
+              <SunIcon
+                onClick={toggleColorMode}
+                boxSize={6}
+                style={{ cursor: "pointer", margin: "0 10px" }}
+              >
+                Toggle
+              </SunIcon>
+            )}
             <Button
               variant={"solid"}
               colorScheme={"teal"}
