@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const jobURL: string = "http://localhost:8888/v1/";
+const jobURL: string = "https://us-central1-indo-dev-228a5.cloudfunctions.net/";
 
 export type CreateJobReq = {
   jobTitle: string;
@@ -50,6 +50,15 @@ export async function PostJob(job: CreateJobReq) {
 }
 
 export async function GetAllJobs() {
-  const response = await axios.get(jobURL + "jobs");
+  const response = await axios.get(
+    "https://us-central1-indo-dev-228a5.cloudfunctions.net/GetAllJobs",
+    {
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET",
+        "Content-Type": "JSON",
+      },
+    }
+  );
   return response.data;
 }
