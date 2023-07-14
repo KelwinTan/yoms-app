@@ -14,7 +14,6 @@ import {
   Stack,
   useColorModeValue,
 } from "@chakra-ui/react";
-import AuthRoute from "@components/auth/AuthRoute";
 import { User } from "@firebase/auth";
 import { GetPlaceholderImageByString } from "@utils/placeholder";
 import { useEffect, useState } from "react";
@@ -128,4 +127,4 @@ const UserProfileEdit = () => {
   );
 };
 
-export default AuthRoute(UserProfileEdit);
+export default UserProfileEdit;

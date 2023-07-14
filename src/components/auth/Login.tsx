@@ -53,7 +53,7 @@ function LoginCard() {
         <Stack spacing={4} w={"full"} maxW={"md"}>
           <Heading fontSize={"2xl"}>Sign in to your account</Heading>
           <Text fontSize={"lg"} color={"gray.600"}>
-            Don't have an account? <Link color={"blue.400"}>Sign Up</Link> ✌️
+            Don t have an account? <Link color={"blue.400"}>Sign Up</Link> ✌️
           </Text>
           <FormControl id="email" isRequired>
             <FormLabel>Email address</FormLabel>
