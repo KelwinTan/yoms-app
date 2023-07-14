@@ -4,9 +4,8 @@ import {
   Link,
   SimpleGrid,
   Stack,
-  Text,
-  Flex,
   Tag,
+  Text,
   useColorModeValue,
 } from "@chakra-ui/react";
 import { ReactNode } from "react";
@@ -61,38 +60,27 @@ export default function FooterWithLogoCentered() {
                 New
               </Tag>
             </Stack>
-            <Link href={"#"}>Tutorials</Link>
             <Link href={"#"}>Pricing</Link>
-            <Link href={"#"}>Releases</Link>
           </Stack>
           <Stack align={"flex-start"}>
             <ListHeader>Company</ListHeader>
             <Link href={"#"}>About Us</Link>
-            <Link href={"#"}>Press</Link>
-            <Link href={"#"}>Careers</Link>
-            <Link href={"#"}>Contact Us</Link>
-            <Link href={"#"}>Partners</Link>
           </Stack>
           <Stack align={"flex-start"}>
             <ListHeader>Legal</ListHeader>
             <Link href={"#"}>Cookies Policy</Link>
             <Link href={"#"}>Privacy Policy</Link>
             <Link href={"#"}>Terms of Service</Link>
-            <Link href={"#"}>Law Enforcement</Link>
-            <Link href={"#"}>Status</Link>
           </Stack>
-          <Stack align={"flex-start"}>
+          {/* <Stack align={"flex-start"}>
             <ListHeader>Follow Us</ListHeader>
             <Link href={"#"}>Facebook</Link>
             <Link href={"#"}>Twitter</Link>
-            <Link href={"#"}>Dribbble</Link>
-            <Link href={"#"}>Instagram</Link>
-            <Link href={"#"}>LinkedIn</Link>
-          </Stack>
+          </Stack> */}
         </SimpleGrid>
       </Container>
       <Box py={10}>
-        <Flex
+        {/* <Flex
           align={"center"}
           _before={{
             content: '""',
@@ -110,10 +98,10 @@ export default function FooterWithLogoCentered() {
           }}
         >
           <Logo />
-        </Flex>
-        <Text pt={6} fontSize={"sm"} textAlign={"center"}>
+        </Flex> */}
+        {/* <Text pt={6} fontSize={"sm"} textAlign={"center"}>
           © 2022 Chakra Templates. All rights reserved
-        </Text>
+        </Text> */}
       </Box>
     </Box>
   );

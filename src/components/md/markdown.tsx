@@ -14,11 +14,10 @@ interface MarkdownProps {
 }
 
 const MarkdownEditor: React.FC<MarkdownProps> = ({ value, onChange }) => {
-  // const [value, setValue] = useState("Job Description");
-
   return (
     <div data-color-mode="dark">
       <MDEditor
+        height={500}
         value={value}
         onChange={onChange}
         previewOptions={{

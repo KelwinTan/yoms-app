@@ -1,3 +1,4 @@
+import { GetCurrentlySignedInUser, SignOut } from "@api/auth";
 import {
   AddIcon,
   CloseIcon,
@@ -6,18 +7,26 @@ import {
   SunIcon,
 } from "@chakra-ui/icons";
 import {
+  Avatar,
   Box,
   Button,
   Flex,
   HStack,
   IconButton,
   Link,
+  Menu,
+  MenuButton,
+  MenuDivider,
+  MenuItem,
+  MenuList,
   Stack,
   useColorMode,
   useColorModeValue,
   useDisclosure,
 } from "@chakra-ui/react";
+import { User } from "@firebase/auth";
 import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 
 type link = {
   name: string;
@@ -27,8 +36,13 @@ type link = {
 const Links: link[] = [
   {
     link: "/",
-    name: "Dashboard",
+    name: "Jobs",
   },
+  // coming soon
+  // {
+  //   link: "/",
+  //   name: "Job Boards",
+  // },
 ];
 
 const NavLink = ({ children }: { children: link }) => (
@@ -50,6 +64,18 @@ export default function NavWithAction() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const router = useRouter();
   const { colorMode, toggleColorMode } = useColorMode();
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    GetCurrentlySignedInUser()
+      .then((user) => {
+        console.log("User: " + user?.email);
+        setUser(user);
+      })
+      .catch((error) =>
+        console.error("Error getting currently signed-in user:", error)
+      );
+  });
 
   return (
     <>
@@ -102,6 +128,58 @@ export default function NavWithAction() {
             >
               Post a Job
             </Button>
+
+            {user ? (
+              <Menu>
+                <MenuButton
+                  as={Button}
+                  rounded={"full"}
+                  variant={"link"}
+                  cursor={"pointer"}
+                  minW={0}
+                >
+                  <Avatar size={"sm"} src={user.photoURL || ""} />
+                </MenuButton>
+                <MenuList>
+                  <MenuItem
+                    onClick={() => {
+                      router.push("/user/profile");
+                    }}
+                  >
+                    View Profile
+                  </MenuItem>
+                  {/* <MenuItem></MenuItem> */}
+                  <MenuDivider />
+                  <MenuItem
+                    onClick={() => {
+                      SignOut();
+                      router.push("/");
+                    }}
+                  >
+                    Logout
+                  </MenuItem>
+                </MenuList>
+              </Menu>
+            ) : (
+              <Menu>
+                <MenuButton
+                  as={Button}
+                  rounded={"full"}
+                  variant={"link"}
+                  cursor={"pointer"}
+                  minW={0}
+                >
+                  <Avatar size={"sm"} background="teal.500" />
+                </MenuButton>
+                <MenuList>
+                  <MenuItem onClick={() => router.push("/auth/login")}>
+                    Login
+                  </MenuItem>
+                  <MenuItem>Register</MenuItem>
+                </MenuList>
+              </Menu>
+            )}
+
             {/* <Menu>
               <MenuButton
                 as={Button}

@@ -3,7 +3,7 @@ import {
   Avatar,
   Card,
   CardBody,
-  Divider,
+  Container,
   Drawer,
   DrawerBody,
   DrawerCloseButton,
@@ -177,8 +177,8 @@ export default function HorizontalJobview(props: JobViewProps) {
           <DrawerContent>
             <DrawerCloseButton />
             <DrawerHeader>
-              {props.job?.jobTitle}
-              <Text fontSize="sm">
+              <Text fontSize="2xl">{props.job?.jobTitle}</Text>
+              <Text fontSize="xl">
                 {props.job?.jobCompanyName
                   ? props.job?.jobCompanyName
                   : "No Company Name"}
@@ -197,25 +197,13 @@ export default function HorizontalJobview(props: JobViewProps) {
                   }
                 />
               </div>
-              <div style={{ marginTop: "10px" }}>
-                <Text fontSize="xl" fontWeight={"bold"}>
-                  Job Description
-                </Text>
-                <EditerMarkdown source={props.job?.jobDescription} />
-                <Divider />
-                <Text fontSize="xl" fontWeight={"bold"}>
-                  Job Location
-                </Text>
-                <Text fontSize={"lg"}>{props.job?.jobLocation}</Text>
-                <Divider />
-                <Text fontSize="xl" fontWeight={"bold"}>
-                  Job Salary
-                </Text>
-                <Text fontSize={"lg"}>
-                  {props.job
-                    ? props.job.jobMinSalary + " - " + props.job.jobMaxSalary
-                    : "test"}
-                </Text>
+              <div style={{ marginTop: "1.5rem" }}>
+                <Container>
+                  <EditerMarkdown
+                    source={props.job?.jobDescription}
+                    style={{ whiteSpace: "pre-wrap" }}
+                  />
+                </Container>
               </div>
             </DrawerBody>
           </DrawerContent>

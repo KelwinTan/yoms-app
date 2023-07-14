@@ -29,6 +29,8 @@ import {
 import { useRouter } from "next/router";
 // import Editor from "../form/editorcontainter";
 import MarkdownEditor from "@components/md/markdown";
+import PaypalPayment from "@components/payments/paypal";
+import ThreeTierPricing from "@components/pricing/TierPricing";
 // These are the defaults for each of the custom props
 const asyncComponents = {
   LoadingIndicator: (props: LoadingIndicatorProps) => (
@@ -226,15 +228,6 @@ const Form1 = () => {
       <FormControl id="salaryRange" mt="2%" isRequired>
         <FormLabel>Salary Range</FormLabel>
         <Flex>
-          {/* <Input
-            id="minSalary"
-            name="minSalary"
-            placeholder="Min Annual Salary"
-            type="number"
-            onChange={(event: React.FormEvent<HTMLInputElement>) => {
-              setMinSalary(event.currentTarget.valueAsNumber);
-            }}
-          /> */}
           <NumberInput
             id="minSalary"
             name="minSalary"
@@ -243,6 +236,7 @@ const Form1 = () => {
               setMinSalary(valueAsNumber);
             }}
             value={format(minVal)}
+            min={0}
           >
             <NumberInputField />
             <NumberInputStepper>
@@ -251,15 +245,6 @@ const Form1 = () => {
             </NumberInputStepper>
           </NumberInput>
           &nbsp;&nbsp;&nbsp;
-          {/* <Input
-            id="maxSalary"
-            name="maxSalary"
-            placeholder="Max Annual Salary"
-            type="number"
-            onChange={(event: React.FormEvent<HTMLInputElement>) => {
-              setMaxSalary(event.currentTarget.valueAsNumber);
-            }}
-          /> */}
           <NumberInput
             id="maxSalary"
             name="maxSalary"
@@ -268,7 +253,7 @@ const Form1 = () => {
               setMaxSalary(valueAsNumber);
             }}
             value={format(maxVal)}
-            // max={50}
+            min={0}
           >
             <NumberInputField />
             <NumberInputStepper>
@@ -287,7 +272,11 @@ const Form1 = () => {
           onChange={(event: React.FormEvent<HTMLInputElement>) => {
             var name = event.currentTarget.value;
             setCompanyName(name);
-            setCompanyLogo("https://logo.clearbit.com/" + name + ".com?s=300");
+            setCompanyLogo(
+              "https://logo.clearbit.com/" +
+                name.replace(/ /g, "") +
+                ".com?s=300"
+            );
           }}
         />
       </FormControl>
@@ -341,6 +330,10 @@ const Form1 = () => {
         )} */}
         <MarkdownEditor value={jobDescription} onChange={setJobDescription} />
       </FormControl>
+
+      <ThreeTierPricing />
+
+      <PaypalPayment />
 
       <ButtonGroup mt="5%" w="100%">
         <Flex w="100%" justifyContent="space-evenly">

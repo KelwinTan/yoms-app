@@ -22,15 +22,9 @@ const Home: NextPage = () => {
         </Head>
 
         <main className={styles.main}>
-          {/* {Jobs.map((job: JobModel) => (
-            // <JobCard job={job} key={job}></JobCard>
-            // <HorizontalJobview props={job} />
-          ))} */}
-
           <CallToActionWithAnnotation />
 
           <JobsView />
-          {/* <JobPostForm /> */}
         </main>
 
         <footer className={styles.footer}>
