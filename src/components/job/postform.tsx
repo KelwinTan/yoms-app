@@ -14,7 +14,6 @@ import {
   NumberInput,
   NumberInputField,
   NumberInputStepper,
-  position,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 
@@ -111,16 +110,6 @@ const Form1 = () => {
   const handleSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     setIsLoading(true);
-
-    console.log("jobType: ", jobType?.value);
-    console.log("jobTitle: ", jobTitle);
-    console.log("position: ", position);
-    console.log("primaryTag: ", primaryTag);
-    console.log("jobLocation: ", jobLocation);
-    console.log("jobDescription: ", jobDescription);
-    console.log("minSalary: ", minSalary);
-    console.log("maxSalary: ", maxSalary);
-    console.log("companyName: ", companyName);
 
     var jobTypeNum: number = ConvertJobTypeToNum(jobType?.value);
     var primaryTagNum: number = ConvertPrimaryTagToNum(primaryTag?.value);

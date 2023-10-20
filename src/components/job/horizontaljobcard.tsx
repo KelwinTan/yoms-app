@@ -53,7 +53,6 @@ export default function HorizontalJobview(props: JobViewProps) {
         className="job-card"
         onClick={(event) => {
           event.preventDefault();
-          console.log("HELLO JOB CARD");
           setShow(!show);
           onOpen();
         }}

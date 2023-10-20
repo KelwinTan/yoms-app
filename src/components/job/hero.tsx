@@ -1,36 +1,29 @@
-import {
-  Box,
-  Container,
-  Heading,
-  Stack,
-  Text,
-  createIcon,
-} from "@chakra-ui/react";
+import { Box, Heading, Stack, Text, createIcon } from "@chakra-ui/react";
 
 export default function CallToActionWithAnnotation() {
   return (
     <>
-      <Container maxW={"3xl"}>
-        <Stack
-          as={Box}
-          textAlign={"center"}
-          spacing={{ base: 8, md: 14 }}
-          py={{ base: 10, md: 20 }}
+      {/* <Container maxW={"3xl"}> */}
+      <Stack
+        as={Box}
+        textAlign={"center"}
+        spacing={{ base: 8, md: 14 }}
+        py={{ base: 10, md: 20 }}
+      >
+        <Heading
+          fontWeight={600}
+          fontSize={{ base: "2xl", sm: "4xl", md: "6xl" }}
+          lineHeight={"110%"}
         >
-          <Heading
-            fontWeight={600}
-            fontSize={{ base: "2xl", sm: "4xl", md: "6xl" }}
-            lineHeight={"110%"}
-          >
-            Indo Dev <br />
-            <Text as={"span"} color={"green.400"}>
-              Remote Jobs
-            </Text>
-          </Heading>
-          <Text color={"gray.500"}>
-            Curated jobs for software developers & tech folks.
+          Indo Dev <br />
+          <Text as={"span"} color={"green.400"}>
+            Remote Jobs
           </Text>
-          {/* <Stack
+        </Heading>
+        <Text color={"gray.500"}>
+          Curated jobs for software developers & tech folks.
+        </Text>
+        {/* <Stack
             direction={"column"}
             spacing={3}
             align={"center"}
@@ -69,8 +62,8 @@ export default function CallToActionWithAnnotation() {
               </Text>
             </Box>
           </Stack> */}
-        </Stack>
-      </Container>
+      </Stack>
+      {/* </Container> */}
     </>
   );
 }

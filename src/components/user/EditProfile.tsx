@@ -64,9 +64,7 @@ const UserProfileEdit = () => {
                   top="-10px"
                   colorScheme="red"
                   aria-label="remove Image"
-                  onClick={() => {
-                    console.log("HJello");
-                  }}
+                  onClick={() => {}}
                   icon={<SmallCloseIcon />}
                 />
               </Avatar>

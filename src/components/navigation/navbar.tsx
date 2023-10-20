@@ -69,7 +69,6 @@ export default function NavWithAction() {
   useEffect(() => {
     GetCurrentlySignedInUser()
       .then((user) => {
-        console.log("User: " + user?.email);
         setUser(user);
       })
       .catch((error) =>

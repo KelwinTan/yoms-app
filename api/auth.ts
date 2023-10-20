@@ -1,11 +1,15 @@
-import { User, onAuthStateChanged, signOut } from "@firebase/auth";
+import {
+  User,
+  onAuthStateChanged,
+  signInWithPopup,
+  signOut,
+} from "@firebase/auth";
 import { initializeApp } from "firebase/app";
 import {
   GoogleAuthProvider,
   createUserWithEmailAndPassword,
   getAuth,
   getRedirectResult,
-  signInWithRedirect,
 } from "firebase/auth";
 import { useRouter } from "next/router";
 
@@ -32,14 +36,10 @@ export function HandleLogin(email: string, password: string) {
     .then((userCredential) => {
       // Signed in
       const user = userCredential.user;
-      // ...
-      console.log("User:" + user);
     })
     .catch((error) => {
       const errorCode = error.code;
       const errorMessage = error.message;
-      // ..
-      console.log(errorCode, errorMessage);
     });
 }
 
@@ -68,7 +68,7 @@ export function HandleGoogleProvider() {
   //       // ...
   //     });
 
-  signInWithRedirect(auth, provider).then(() => {
+  signInWithPopup(auth, provider).then(() => {
     const router = useRouter();
     router.push("/");
   });
@@ -85,7 +85,6 @@ export function HandleGoogleProvider() {
         // IdP data available using getAdditionalUserInfo(result)
         // ...
 
-        console.log("Token: " + token);
         // const router = useRouter();
         // router.push("/");
       } else {
@@ -101,8 +100,6 @@ export function HandleGoogleProvider() {
       // The AuthCredential type that was used.
       const credential = GoogleAuthProvider.credentialFromError(error);
       // ...
-      console.log("HELLO");
-      console.log("error: " + errorMessage);
     });
 }
 

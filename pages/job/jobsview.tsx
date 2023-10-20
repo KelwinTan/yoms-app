@@ -1,5 +1,5 @@
 import { GetAllJobs, JobModel } from "@api/job";
-import { Container } from "@chakra-ui/react";
+import { Container, Skeleton, Stack } from "@chakra-ui/react";
 import HorizontalJobview from "@components/job/horizontaljobcard";
 import { useCallback, useEffect, useState } from "react";
 
@@ -8,7 +8,6 @@ export default function JobsView() {
 
   const fetchJobsData = useCallback(async () => {
     const data = await GetAllJobs();
-    console.log("data: ", data.data);
     setJobs(data.data);
   }, []);
 
@@ -18,9 +17,17 @@ export default function JobsView() {
 
   return (
     <Container>
-      {jobs.map((job, index) => {
-        return <HorizontalJobview job={job} key={index} />;
-      })}
+      {jobs ? (
+        jobs.map((job, index) => {
+          return <HorizontalJobview job={job} key={index} />;
+        })
+      ) : (
+        <Stack>
+          <Skeleton height="20px" />
+          <Skeleton height="20px" />
+          <Skeleton height="20px" />
+        </Stack>
+      )}
     </Container>
   );
 }

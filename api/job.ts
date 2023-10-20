@@ -42,10 +42,10 @@ export async function PostJob(job: CreateJobReq) {
       jobCompanyLogoURL: job.jobCompanyLogoURL,
     })
     .then(function (response) {
-      console.log(response);
+      // console.log(response);
     })
     .catch(function (error) {
-      console.log(error);
+      // console.log(error);
     });
 }
 
